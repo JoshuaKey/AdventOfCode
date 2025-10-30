@@ -1,0 +1,58 @@
+Blueprint 1
+Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 4 ore. Each obsidian robot costs 3 ore and 19 clay. Each geode robot costs 4 ore and 15 obsidian.
+
+MINUTE	| ORE		| ORE BOT	| CLAY	| CLAY BOT	| OBISIDAN	| OBSIDIAN BOT	| GEODE		| GEODE BOT
+1		| 1			| 1			|	0	|	0		|	0		|	0			|	0		|	0
+2		| 2			| 1			|	0	|	0		|	0		|	0			|	0		|	0
+3		| 3			| 1			|   0	|	0		|	0		|	0			|	0		|	0
+4		| 4			| 1			|	0	|	0		|	0		|	0			|	0		|	0
+5		|			|			|		|			|			|				|			|	
+6		|			|			|		|			|			|				|			|	
+7		|			|			|		|			|			|				|			|	
+8		|			|			|		|			|			|				|			|	
+9		|			|			|		|			|			|				|			|	
+10		|			|			|		|			|			|				|			|	
+11		|			|			|		|			|			|				|			|	
+12		|			|			|		|			|			|				|			|	
+13		|			|			|		|			|			|				|			|	
+14		|			|			|		|			|			|				|			|	
+15		|			|			|		|			|			|				|			|	
+16		|			|			|		|			|			|				|			|	
+17		|			|			|		|			|			|				|			|	
+18		|			|			|		|			|			|				|			|	
+19		|			|			|		|			|			|				|			|	
+20		|			|			|		|			|			|				|			|	
+21		|			|			|		|			|			|				|			|	
+22		|			|			|		|			|			|				|			|	
+23		|			|			|		|			|			|				|			|	
+24		|			|			|		|			|			|				|			|	
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+Blueprint 23
+Blueprint 23: Each ore robot costs 4 ore. Each clay robot costs 3 ore. Each obsidian robot costs 2 ore and 7 clay. Each geode robot costs 3 ore and 8 obsidian.
+
+MINUTE	| ORE		| ORE BOT	| CLAY	| CLAY BOT	| OBISIDAN	| OBSIDIAN BOT	| GEODE		| GEODE BOT
+1		| 1			| 1			|	0	|	0		|	0		|	0			|	0		|	0
+2		| 2			| 1			|	0	|	0		|	0		|	0			|	0		|	0
+3		| 3			| 1			|   0	|	0		|	0		|	0			|	0		|	0
+4		| 4			| 1			|	0	|	0		|	0		|	0			|	0		|	0
+5		|			|			|		|			|			|				|			|	
+6		|			|			|		|			|			|				|			|	
+7		|			|			|		|			|			|				|			|	
+8		|			|			|		|			|			|				|			|	
+9		|			|			|		|			|			|				|			|	
+10		|			|			|		|			|			|				|			|	
+11		|			|			|		|			|			|				|			|	
+12		|			|			|		|			|			|				|			|	
+13		|			|			|		|			|			|				|			|	
+14		|			|			|		|			|			|				|			|	
+15		|			|			|		|			|			|				|			|	
+16		|			|			|		|			|			|				|			|	
+17		|			|			|		|			|			|				|			|	
+18		|			|			|		|			|			|				|			|	
+19		|			|			|		|			|			|				|			|	
+20		|			|			|		|			|			|				|			|	
+21		|			|			|		|			|			|				|			|	
+22		|			|			|		|			|			|				|			|	
+23		|			|			|		|			|			|				|			|	
+24		|			|			|		|			|			|				|			|

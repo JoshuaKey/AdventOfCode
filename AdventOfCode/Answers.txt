@@ -1,0 +1,11 @@
+4096 - WRONG - Too High
+- Greedy
+
+1019 - WRONG - Too Low
+- Optimistic
+
+1058 - WRONG - Too Low
+1058
+1058
+
+1081 - CORRECT!!!
