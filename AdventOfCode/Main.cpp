@@ -3,7 +3,7 @@
 #include <fstream>
 #include <vector>
 
-#include "Day19.h"
+#include "Day19/Day19.h"
 
 int main()
 {
