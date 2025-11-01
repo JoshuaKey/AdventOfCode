@@ -2,11 +2,10 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 
 namespace Day19
 {
-	constexpr int TIME_LIMIT = 25;
-
 	enum ResourceType
 	{
 		INVALID = -1,
@@ -23,24 +22,23 @@ namespace Day19
 		int cost[ResourceType::MAX] = { };
 	};
 
-	struct Table
+	struct StateData
 	{
-		int resources[ResourceType::MAX] = { };
-		int bots[ResourceType::MAX] = { };
-		bool builtBots[ResourceType::MAX] = { };
+		char resources[ResourceType::MAX] = { };
+		char bots[ResourceType::MAX] = { };
+	};
 
-		Table() = default;
-		Table(Table const& rhs)
-		{
-			std::copy(rhs.resources, rhs.resources + ResourceType::MAX, resources);
-			std::copy(rhs.bots, rhs.bots + ResourceType::MAX, bots);
-			//std::copy(rhs.builtBots, rhs.builtBots + ResourceType::MAX, builtBots);
-		}
+	struct State
+	{
+		StateData stateData = {};
+		bool builtBots[ResourceType::MAX] = { };
 	};
 
 	class Simulation
 	{
 	public:
+
+		static int TIME_LIMIT;
 
 	public:
 		void LoadTestRobotCosts();
@@ -50,13 +48,11 @@ namespace Day19
 		void LoadRobotCost(std::string& stringData, ResourceType botType);
 
 	public:	
-		int Simulate();
-
-		int Do(int bestGeodesSoFar);
-		int GetMaximumPossibleGeodes(Table const& state, int step);
-
 		int FindGreedySolution(bool includeOre = false);
+		int FindBestSolution(int bestGeodesSoFar);
+		int GetMaximumPossibleGeodes(State const& state, int step);
 
+	public:
 		int GetID() { return ID; }
 
 	private:

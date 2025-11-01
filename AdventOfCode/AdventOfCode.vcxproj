@@ -123,20 +123,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Day19.cpp" />
+    <ClCompile Include="Day19\Day19.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Day19.h" />
+    <ClInclude Include="Day19\Day19.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Answers.txt" />
-    <Text Include="Day19Data.txt" />
-    <Text Include="Day19DataFormatted.txt" />
-    <Text Include="Day19Example.txt" />
-    <Text Include="Day19ExampleFormatted.txt" />
-    <Text Include="Testing.txt" />
-    <Text Include="TestingBlueprint1.txt" />
+    <Text Include="Day19\Answers.txt" />
+    <Text Include="Day19\Day19Data.txt" />
+    <Text Include="Day19\Day19DataFormatted.txt" />
+    <Text Include="Day19\Day19Example.txt" />
+    <Text Include="Day19\Day19ExampleFormatted.txt" />
+    <Text Include="Day19\Testing.txt" />
+    <Text Include="Day19\TestingBlueprint1.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

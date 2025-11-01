@@ -12,6 +12,8 @@
 /// SIMULATION CLASS
 namespace Day19
 {
+	int Simulation::TIME_LIMIT = 25; // 1 -> 25 = 24 Time Steps
+
 	void Simulation::LoadRobotCosts(std::string const& stringData)
 	{
 		size_t botSeperator = stringData.find(':');
@@ -150,55 +152,40 @@ namespace Day19
 		}
 	}
 
-	int Simulation::Simulate()
-	{
-		int greedySolution = FindGreedySolution();
-		std::cout << "A Greedy Solution: " << greedySolution << std::endl;
-
-		int greedySolutionWithOre = FindGreedySolution(true);
-		std::cout << "A Greedy Solution With Ore: " << greedySolutionWithOre << std::endl;
-
-		int bestGreedySolution = greedySolutionWithOre > greedySolution ? greedySolutionWithOre : greedySolution;
-
-		int bestSolution = Do(bestGreedySolution);
-
-		return bestSolution;
-	}
-
 	int Simulation::FindGreedySolution(bool includeOre)
 	{
-		Table currentState;
-		currentState.bots[ORE] = 1;
+		State currentState;
+		currentState.stateData.bots[ORE] = 1;
 
 		for (int i = 1; i < TIME_LIMIT; i++)
 		{
 			ResourceType botToBuild = INVALID;
 
 			// Build 1 Ore Bot (if requested)
-			if (currentState.bots[ORE] == 1 && includeOre)
+			if (currentState.stateData.bots[ORE] == 1 && includeOre)
 			{
 				RobotCost const& botCosts = m_robotCosts[ORE];
-				if (currentState.resources[ORE] >= botCosts.cost[ORE])
+				if (currentState.stateData.resources[ORE] >= botCosts.cost[ORE])
 				{
 					botToBuild = ORE;
 				}
 			}
 			// Build Clay if possible
-			else if (currentState.bots[CLAY] == 0)
+			else if (currentState.stateData.bots[CLAY] == 0)
 			{
 				RobotCost const& botCosts = m_robotCosts[CLAY];
-				if (currentState.resources[ORE] >= botCosts.cost[ORE])
+				if (currentState.stateData.resources[ORE] >= botCosts.cost[ORE])
 				{
 					botToBuild = CLAY;
 				}
 			}
-			else if (currentState.bots[OBSIDIAN] == 0)
+			else if (currentState.stateData.bots[OBSIDIAN] == 0)
 			{
 				// Build Obsidian if possible
 				RobotCost const& botCosts = m_robotCosts[OBSIDIAN];
-				if (currentState.resources[CLAY] >= botCosts.cost[CLAY])
+				if (currentState.stateData.resources[CLAY] >= botCosts.cost[CLAY])
 				{
-					if (currentState.resources[ORE] >= botCosts.cost[ORE])
+					if (currentState.stateData.resources[ORE] >= botCosts.cost[ORE])
 					{
 						botToBuild = OBSIDIAN;
 					}
@@ -207,7 +194,7 @@ namespace Day19
 				else
 				{
 					RobotCost const& botCosts = m_robotCosts[CLAY];
-					if (currentState.resources[ORE] >= botCosts.cost[ORE])
+					if (currentState.stateData.resources[ORE] >= botCosts.cost[ORE])
 					{
 						botToBuild = CLAY;
 					}
@@ -217,9 +204,9 @@ namespace Day19
 			{
 				RobotCost const& botCosts = m_robotCosts[GEODE];
 				// Build Geode if possible
-				if (currentState.resources[OBSIDIAN] >= botCosts.cost[OBSIDIAN])
+				if (currentState.stateData.resources[OBSIDIAN] >= botCosts.cost[OBSIDIAN])
 				{
-					if (currentState.resources[ORE] >= botCosts.cost[ORE])
+					if (currentState.stateData.resources[ORE] >= botCosts.cost[ORE])
 					{
 						botToBuild = GEODE;
 					}
@@ -228,9 +215,9 @@ namespace Day19
 				else
 				{
 					RobotCost const& botCosts = m_robotCosts[OBSIDIAN];
-					if (currentState.resources[CLAY] >= botCosts.cost[CLAY])
+					if (currentState.stateData.resources[CLAY] >= botCosts.cost[CLAY])
 					{
-						if (currentState.resources[ORE] >= botCosts.cost[ORE])
+						if (currentState.stateData.resources[ORE] >= botCosts.cost[ORE])
 						{
 							botToBuild = OBSIDIAN;
 						}
@@ -239,7 +226,7 @@ namespace Day19
 					else if (botCosts.cost[CLAY] < 10)
 					{
 						RobotCost const& botCosts = m_robotCosts[CLAY];
-						if (currentState.resources[ORE] >= botCosts.cost[ORE])
+						if (currentState.stateData.resources[ORE] >= botCosts.cost[ORE])
 						{
 							botToBuild = CLAY;
 						}
@@ -250,7 +237,7 @@ namespace Day19
 			// Add Resources
 			for (int resourceType = ORE; resourceType < MAX; resourceType++)
 			{
-				currentState.resources[resourceType] += currentState.bots[resourceType];
+				currentState.stateData.resources[resourceType] += currentState.stateData.bots[resourceType];
 			}
 
 			// Add Bots
@@ -260,32 +247,43 @@ namespace Day19
 
 				for (int resourceType = ORE; resourceType < MAX; resourceType++)
 				{
-					currentState.resources[resourceType] -= botCosts.cost[resourceType];
+					currentState.stateData.resources[resourceType] -= botCosts.cost[resourceType];
 				}
 
-				currentState.bots[botToBuild] += 1;
+				currentState.stateData.bots[botToBuild] += 1;
 			}
 		}
 
-		return currentState.resources[GEODE];
+		return currentState.stateData.resources[GEODE];
 	}
 
-	int Simulation::Do(int bestGeodesSoFar)
+	int Simulation::FindBestSolution(int bestGeodesSoFar)
 	{
-		std::vector<Table> stateArray;
-		stateArray.reserve(100000);
+		int maximumBots[ResourceType::MAX] = { };
+		for (int botType = ORE; botType < MAX; botType++)
+		{
+			RobotCost const& botCost = m_robotCosts[botType];
+			for (int resourceType = ORE; resourceType < MAX; resourceType++)
+			{
+				if (botCost.cost[resourceType] > maximumBots[resourceType])
+				{
+					maximumBots[resourceType] = botCost.cost[resourceType];
+				}
+			}
+		}
+		maximumBots[GEODE] = INT_MAX;
 
-		stateArray.push_back(Table());
-		stateArray.back().bots[ORE] = 1;
+		std::vector<State> stateArray;
+		stateArray.push_back(State());
+		stateArray.back().stateData.bots[ORE] = 1;
 
-		std::vector<Table> newStates;
-		newStates.reserve(stateArray.size());
+		std::vector<State> newStates;
 
 		for (int step = 1; step < TIME_LIMIT; step++)
 		{
 			for (auto iter = stateArray.begin(); iter != stateArray.end();)
 			{
-				Table& currentState = *iter;
+				State& currentState = *iter;
 
 				// Check which Bots we can build
 				std::vector<int> botsToBuild;
@@ -293,7 +291,7 @@ namespace Day19
 				for (int botType = ORE; botType < MAX; botType++)
 				{
 					// Only build a maximum of 4 ORE Bots
-					if (botType == ORE && currentState.bots[ORE] >= 4)
+					if (currentState.stateData.bots[botType] >= maximumBots[botType])
 					{
 						continue;
 					}
@@ -309,7 +307,7 @@ namespace Day19
 					bool canBuild = true;
 					for (int resourceType = ORE; resourceType < MAX; resourceType++)
 					{
-						if (currentState.resources[resourceType] < botCost.cost[resourceType])
+						if (currentState.stateData.resources[resourceType] < botCost.cost[resourceType])
 						{
 							canBuild = false;
 						}
@@ -330,13 +328,13 @@ namespace Day19
 				// Add Resources
 				for (int resourceType = ORE; resourceType < MAX; resourceType++)
 				{
-					currentState.resources[resourceType] += currentState.bots[resourceType];
+					currentState.stateData.resources[resourceType] += currentState.stateData.bots[resourceType];
 				}
 
 				// Update Best Geodes
-				if (currentState.resources[GEODE] > bestGeodesSoFar)
+				if (currentState.stateData.resources[GEODE] > bestGeodesSoFar)
 				{
-					bestGeodesSoFar = currentState.resources[GEODE];
+					bestGeodesSoFar = currentState.stateData.resources[GEODE];
 				}
 
 				// Add new Bots
@@ -344,32 +342,33 @@ namespace Day19
 				{
 					currentState.builtBots[botType] = true;
 
-					Table copyState = currentState;
+					State newState = { currentState.stateData, {} };
 
 					RobotCost const& botCosts = m_robotCosts[botType];
 					for (int resourceType = ORE; resourceType < MAX; resourceType++)
 					{
-						copyState.resources[resourceType] -= botCosts.cost[resourceType];
+						newState.stateData.resources[resourceType] -= botCosts.cost[resourceType];
 					}
-					copyState.bots[botType] += 1;
+					newState.stateData.bots[botType] += 1;
 
 					// Check if new state is actually useable
-					int maximumPossibleGeodes = GetMaximumPossibleGeodes(copyState, step);
+					int maximumPossibleGeodes = GetMaximumPossibleGeodes(newState, step);
 					if (maximumPossibleGeodes > bestGeodesSoFar)
 					{
-						newStates.push_back(copyState);
+						newStates.push_back(newState);
 					}
 				}
 
-				// Remove "completed" States, or states that have created as many children as they can.
-				if (currentState.builtBots[GEODE]
-					|| (currentState.bots[OBSIDIAN] == 0 && currentState.builtBots[OBSIDIAN] && currentState.builtBots[CLAY] && currentState.builtBots[ORE])
-					|| (currentState.bots[CLAY] == 0 && currentState.builtBots[CLAY] && currentState.builtBots[ORE])
-					)
-				{
-					iter = stateArray.erase(iter);
-					continue;
-				}
+				// NOTE: This actually makes the application slower...
+				//// Remove "completed" States, or states that have created as many children as they can.
+				//if (currentState.builtBots[GEODE]
+				//	|| (currentState.stateData.bots[OBSIDIAN] == 0 && currentState.builtBots[OBSIDIAN] && currentState.builtBots[CLAY] && currentState.builtBots[ORE])
+				//	|| (currentState.stateData.bots[CLAY] == 0 && currentState.builtBots[CLAY] && currentState.builtBots[ORE])
+				//	)
+				//{
+				//	iter = stateArray.erase(iter);
+				//	continue;
+				//}
 
 				++iter;
 			}
@@ -382,30 +381,16 @@ namespace Day19
 		return bestGeodesSoFar;
 	}
 
-	int Simulation::GetMaximumPossibleGeodes(Table const& state, int step)
+	int Simulation::GetMaximumPossibleGeodes(State const& state, int step)
 	{
 		// This is a quick and extremely optimistic simulation that tries to determine the 
 		// maximum amount of Geodes the current state cna achieve if it builds the neccesary robot each step.
 
 		// Used to determine the "potential" of the State and if it is worth being continued.
 
-		if (state.bots[CLAY] == 0)
-		{
-			//if (m_robotCosts[CLAY].cost[ORE] > m_robotCosts[ORE].cost[ORE])
-			//{
-			//	int resource = state.resources[ORE];
-			//	for (int i = 0; step < TIME_LIMIT; step++, i++)
-			//	{
-			//		if (resource >= m_robotCosts[ORE].cost[ORE])
-			//		{
-			//			break;
-			//		}
-
-			//		resource += state.bots[ORE] + i;
-			//	}
-			//}
-
-			int resource = state.resources[ORE];
+		if (state.stateData.bots[CLAY] == 0)
+		{\
+			int resource = state.stateData.resources[ORE];
 			for (int i = 0; step < TIME_LIMIT; step++, i++)
 			{
 				if (resource >= m_robotCosts[CLAY].cost[ORE])
@@ -413,13 +398,13 @@ namespace Day19
 					break;
 				}
 
-				resource += state.bots[ORE] + i;
+				resource += state.stateData.bots[ORE] + i;
 			}
 		}
 
-		if (state.bots[OBSIDIAN] == 0)
+		if (state.stateData.bots[OBSIDIAN] == 0)
 		{
-			int resource = state.resources[CLAY];
+			int resource = state.stateData.resources[CLAY];
 			for (int i = 0; step < TIME_LIMIT; step++, i++)
 			{
 				if (resource >= m_robotCosts[OBSIDIAN].cost[CLAY])
@@ -427,13 +412,13 @@ namespace Day19
 					break;
 				}
 
-				resource += state.bots[CLAY] + i;
+				resource += state.stateData.bots[CLAY] + i;
 			}
 		}
 
-		if (state.bots[GEODE] == 0)
+		if (state.stateData.bots[GEODE] == 0)
 		{
-			int resource = state.resources[OBSIDIAN];
+			int resource = state.stateData.resources[OBSIDIAN];
 			for (int i = 0; step < TIME_LIMIT; step++, i++)
 			{
 				if (resource >= m_robotCosts[GEODE].cost[OBSIDIAN])
@@ -441,15 +426,12 @@ namespace Day19
 					break;
 				}
 
-				resource += state.bots[OBSIDIAN] + i;
+				resource += state.stateData.bots[OBSIDIAN] + i;
 			}
 		}
 
-		int maximumPossibleGeodes = state.resources[GEODE];
-		for (int i = 0; step < TIME_LIMIT; step++, i++)
-		{
-			maximumPossibleGeodes += state.bots[GEODE] + i;
-		}
+		int remainingSteps = TIME_LIMIT - step;
+		int maximumPossibleGeodes = state.stateData.resources[GEODE] + state.stateData.bots[GEODE] * remainingSteps + (remainingSteps * (remainingSteps-1) / 2);
 
 		return maximumPossibleGeodes;
 	}
